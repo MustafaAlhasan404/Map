@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // _performLogin(context);
+          _performLogin(context);
         },
         child: Text(
           'Login',
@@ -262,6 +262,48 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       minimumSize: Size(double.infinity, 48),
+    );
+  }
+
+  // Function to handle login logic
+  void _performLogin(BuildContext context) {
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+
+    // Check if username or password is empty
+    if (username.isEmpty || password.isEmpty) {
+      print('Username or password is empty');
+      _showErrorMessage(context, 'Username or password is empty');
+      return;
+    }
+
+    // Add your login logic here
+
+    // Example showing an error alert
+    _showErrorMessage(
+        context, 'Invalid username or password. Please try again.');
+  }
+
+  // Function to show an error message
+  void _showErrorMessage(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          backgroundColor: Color(0xFFF7ECE1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
