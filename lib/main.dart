@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-// import 'login.dart';
-import 'home.dart';
+import 'login.dart';
+// import 'home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
           cursorColor: Color(0xFF5E2EB8),
         ),
       ),
-      // home: const LoginPage(),
-      home: HomeScreen(),
+      home: const LoginPage(),
+      // home: HomeScreen(),
     );
   }
 }

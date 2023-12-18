@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-//import 'login.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -123,7 +121,7 @@ class _SignupPageState extends State<SignupPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          _signup(); // Call the signup function when the button is pressed
+          // UI only, no data handling here
         },
         child: Text(
           'Sign Up',
@@ -253,41 +251,5 @@ class _SignupPageState extends State<SignupPage> {
       ),
       minimumSize: Size(double.infinity, 48),
     );
-  }
-
-  // Function to handle signup logic
-  void _signup() async {
-    final username = _usernameController.text;
-    final password = _passwordController.text;
-
-    // Validate if username and password are not empty
-    if (username.isNotEmpty && password.isNotEmpty) {
-      // Make a POST request to the server
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/signup'),
-        body: {
-          'username': username,
-          'password': password,
-        },
-      );
-
-      // Check if the response status code is 201 (Success)
-      if (response.statusCode == 201) {
-        // Navigate to the login page on success
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) =>
-        //           LoginPage()), // Replace LoginPage with the actual class name
-        // );
-        print("Success");
-      } else {
-        // Handle error or display a message if signup fails
-        print('Signup failed. Status code: ${response.statusCode}');
-      }
-    } else {
-      // Handle case where username or password is empty
-      print('Please enter both username and password');
-    }
   }
 }
