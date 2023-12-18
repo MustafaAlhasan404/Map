@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
+// Import your LoginPage class
+import 'login.dart'; // Update with the correct path
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -9,8 +13,11 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  // Controllers for handling text input
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // State variables
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
 
@@ -45,6 +52,8 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
+
+  // Widgets for UI components
 
   Widget _buildHeaderText(String text) {
     return Text(
@@ -121,7 +130,11 @@ class _SignupPageState extends State<SignupPage> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // UI only, no data handling here
+          if (_agreeToTerms) {
+            _performSignup();
+          } else {
+            _showTermsAlert(context);
+          }
         },
         child: Text(
           'Sign Up',
@@ -189,6 +202,8 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  // Styles and text configurations
+
   TextStyle _inputTextStyle() {
     return GoogleFonts.sora(
       textStyle: const TextStyle(
@@ -250,6 +265,110 @@ class _SignupPageState extends State<SignupPage> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       minimumSize: Size(double.infinity, 48),
+    );
+  }
+
+  // Function to handle signup logic
+
+  void _performSignup() async {
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+
+    // Check if username or password is empty
+    if (username.isEmpty || password.isEmpty) {
+      print('Username or password is empty');
+      return;
+    }
+
+    // Replace 'http://your-server-url:3000/signup' with the actual URL of your Node.js server
+    final String serverUrl =
+        'http://10.0.2.2:3000/signup'; // Update with your server URL
+
+    try {
+      final response = await http.post(
+        Uri.parse(serverUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      print('Server Response Code: ${response.statusCode}');
+      print('Server Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Signup successful
+        // Navigate to the login page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  LoginPage()), // Replace with your actual login page class
+        );
+      } else if (response.statusCode == 400) {
+        // Signup failed due to existing username
+        // Display an error message to the user
+        print('Signup failed: Username already exists');
+        _showErrorMessage(
+            'Username already exists. Please enter another username.');
+      } else {
+        // Signup failed for other reasons
+        // Display a generic error message
+        print('Signup failed');
+        _showErrorMessage('Signup failed. Please try again later.');
+      }
+    } catch (error) {
+      // Handle network or server errors
+      print('Error: $error');
+      _showErrorMessage(
+          'An error occurred. Please check your network connection and try again.');
+    }
+  }
+
+  // Function to show an error message
+  void _showErrorMessage(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          backgroundColor: Color(0xFFF7ECE1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Function to show an alert for accepting terms
+  void _showTermsAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Accept Terms'),
+          content: Text('Please accept the Terms of Service to sign up.'),
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          backgroundColor: Color(0xFFF7ECE1),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
