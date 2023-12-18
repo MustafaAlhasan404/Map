@@ -1,7 +1,7 @@
-POST http://localhost:3000/signup
-Content-Type: application/json
+# POST http://localhost:3000/signup
+# Content-Type: application/json
 
-{
-    "username": "mustafa",
-    "password": "mustafa"
-}
+# {
+#     "username": "mustafa",
+#     "password": "mustafa"
+# }
