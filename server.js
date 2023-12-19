@@ -53,7 +53,7 @@ app.post('/signup', async (req, res) => {
         const cvv = generateCVV();
         newUser.cvv = cvv;
 
-        // Generate expiry date (MM/YY format) based on the signup date
+        // Generate expiry date (MM/DD format) based on the signup date
         const signupDate = new Date();
         const expiryDate = generateExpiryDate(signupDate);
         newUser.expiryDate = expiryDate;
@@ -72,33 +72,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Endpoint for handling login
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    try {
-        console.log('Received login request:', { username, password });
-
-        // Check if the user exists
-        const user = await User.findOne({ username, password });
-        if (!user) {
-            console.log('Invalid username or password');
-            return res.status(401).json({ error: 'Invalid username or password' });
-        }
-
-        // You can perform additional tasks here (e.g., create a session)
-
-        // Respond with success
-        console.log('Login successful');
-        res.status(200).json({ message: 'Login successful' });
-    } catch (error) {
-        // Handle database or server errors
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// Helper function to generate a random 16-digit credit card number
+// Helper function to generate a random 4-digit credit card number
 function generateCreditCardNumber() {
     const randomDigits = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10));
     const formattedNumber = randomDigits.join('').replace(/(\d{4})/g, '$1 ').trim();
@@ -110,7 +84,7 @@ function generateCVV() {
     return Math.floor(100 + Math.random() * 900).toString();
 }
 
-// Helper function to generate expiry date in MM/YY format based on the signup date
+// Helper function to generate expiry date in MM/DD format based on the signup date
 function generateExpiryDate(signupDate) {
     const month = signupDate.getMonth() + 1; // Months are zero-indexed
     const year = signupDate.getFullYear() % 100; // Use last two digits of the year
