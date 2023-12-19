@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
@@ -23,8 +25,8 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     return Container(
       width: MediaQuery.of(context).size.width * 0.9,
       decoration: BoxDecoration(
-        color: Color(0xFF9067C6),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        color: const Color(0xFF9067C6),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         boxShadow: [
           BoxShadow(
             blurRadius: 20,
@@ -41,7 +43,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             gap: 8,
             activeColor: Colors.black,
             iconSize: 24,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             duration: Duration(milliseconds: 400),
             tabBackgroundColor: Color(0xFF9067C6),
             color: Colors.black,
