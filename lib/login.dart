@@ -1,6 +1,9 @@
+import 'package:EvilBank/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'signup.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -47,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 24),
                 _buildRememberMeCheckbox(),
                 const SizedBox(height: 24),
-                _buildLoginButton(),
+                _buildLoginButton(context),
                 const SizedBox(height: 24),
                 _buildSignupButton(context),
               ],
@@ -117,12 +120,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildLoginButton() {
+  Widget _buildLoginButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          // _performLogin(context);
+          _performLogin(context);
         },
         child: Text(
           'Login',
@@ -262,6 +265,76 @@ class _LoginPageState extends State<LoginPage> {
         borderRadius: BorderRadius.circular(10.0),
       ),
       minimumSize: Size(double.infinity, 48),
+    );
+  }
+
+  Future<void> _performLogin(BuildContext context) async {
+    print('Attempting login...');
+    final String username = _usernameController.text;
+    final String password = _passwordController.text;
+
+    // Assuming you have an API endpoint for login
+    final String loginEndpoint = 'http://10.0.2.2:3000/login';
+
+    try {
+      final response = await http.post(
+        Uri.parse(loginEndpoint),
+        headers: {
+          'Content-Type':
+              'application/json', // Add this line to specify JSON content type
+        },
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      );
+
+      print('Response status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Login successful, navigate to HomeScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                HomeScreen(), // Replace with your actual home page class
+          ),
+        );
+      } else if (response.statusCode == 400) {
+        // Username not found
+        _showErrorDialog('Username not found');
+      } else if (response.statusCode == 401) {
+        // Incorrect password
+        _showErrorDialog('Incorrect password');
+      } else {
+        // Handle other errors
+        _showErrorDialog('Login failed. Please try again.');
+      }
+    } catch (error) {
+      print('Error during login: $error');
+      // Handle network or server errors
+      _showErrorDialog('Error connecting to the server. Please try again.');
+    }
+  }
+
+  void _showErrorDialog(String errorMessage) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Login Error'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

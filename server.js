@@ -55,12 +55,12 @@ app.post('/signup', async (req, res) => {
 
         // Generate expiry date (MM/DD format) based on the signup date
         const signupDate = new Date();
-        const expiryDate = generateExpiryDate(signupDate);
+        const expiryDate = generateExpiryDate(signupdate);
         newUser.expiryDate = expiryDate;
 
         await newUser.save();
 
-        // You can perform additional tasks here (e.g., send confirmation email)
+        // You can perform additional tasks here (e.g., send a confirmation email)
 
         // Respond with success
         console.log('Signup successful');
@@ -84,13 +84,50 @@ function generateCVV() {
     return Math.floor(100 + Math.random() * 900).toString();
 }
 
-// Helper function to generate expiry date in MM/DD format based on the signup date
+// Helper function to generate an expiry date in MM/DD format based on the signup date
 function generateExpiryDate(signupDate) {
     const month = signupDate.getMonth() + 1; // Months are zero-indexed
-    const year = signupDate.getFullYear() % 100; // Use last two digits of the year
+    const year = signupDate.getFullYear() % 100; // Use the last two digits of the year
     return `${month.toString().padStart(2, '0')}/${year.toString().padStart(2, '0')}`;
 }
 
+// Endpoint for handling login
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        console.log('Received login request:', { username, password });
+
+        // Check if the username exists
+        const existingUser = await User.findOne({ username });
+        if (!existingUser) {
+            console.log('Username not found');
+            return res.status(400).json({ error: 'Username not found' });
+        }
+
+        // Check if the password is correct
+        if (password !== existingUser.password) {
+            console.log('Incorrect password');
+            return res.status(401).json({ error: 'Incorrect password' });
+        }
+
+        // Login successful
+        console.log('Login successful');
+
+        // You can perform additional tasks here (e.g., create a session, generate a token)
+
+        // Respond with success
+        res.status(200).json({ message: 'Login successful' });
+    } catch (error) {
+        // Handle database or server errors
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// This is where you can add more endpoints or configurations if needed
+
+// Start the server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
