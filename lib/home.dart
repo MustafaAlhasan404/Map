@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     cardExpiry: expiryDate,
                     cardHolderName: cardHolderName,
                     cvv: cvv,
-                    bankName: 'Axis Bank',
+                    bankName: 'Evil Bank',
                     showBackSide: _showBackSide,
                     frontBackground: CardBackgrounds.black,
                     backBackground: Container(
@@ -71,68 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(
                   height: 40,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: TextFormField(
-                        decoration: InputDecoration(hintText: 'Card Number'),
-                        maxLength: 19,
-                        onChanged: (value) {
-                          setState(() {
-                            cardNumber = _formatCardNumber(value);
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: TextFormField(
-                        decoration: InputDecoration(hintText: 'Card Expiry'),
-                        maxLength: 5,
-                        onChanged: (value) {
-                          setState(() {
-                            expiryDate = value;
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: 20,
-                      ),
-                      child: TextFormField(
-                        decoration:
-                            InputDecoration(hintText: 'Card Holder Name'),
-                        onChanged: (value) {
-                          setState(() {
-                            cardHolderName = value;
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
-                      margin:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 25),
-                      child: TextFormField(
-                        decoration: InputDecoration(hintText: 'CVV'),
-                        maxLength: 3,
-                        onChanged: (value) {
-                          setState(() {
-                            cvv = value;
-                          });
-                        },
-                        focusNode: _cvvFocusNode,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -148,15 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  String _formatCardNumber(String input) {
-    input = input.replaceAll(RegExp(r'\D'), '');
-    if (input.length > 16) {
-      input = input.substring(0, 16);
-    }
-    return input.replaceAllMapped(
-        RegExp(r'.{4}'), (match) => '${match.group(0)} ');
   }
 }
 
