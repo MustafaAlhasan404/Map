@@ -1,26 +1,28 @@
+// Import necessary libraries
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
+// Create an Express application
 const app = express();
 const port = 3000;
 
-// Middleware
+// Middleware setup
 app.use(cors());
 app.use(bodyParser.json());
 
-// Connect to MongoDB using your provided connection string
+// Connect to MongoDB using the provided connection string
 mongoose.connect('mongodb+srv://mustafa:mustafa@cluster0.cdvxaix.mongodb.net/test', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 
-// Create a mongoose schema for the user
+// Define a mongoose schema for the user
 const userSchema = new mongoose.Schema({
-    username: String,
-    password: String,
-    creditCardNumber: String,
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    creditCardNumber: { type: String, unique: true },
     cvv: String,
     expiryDate: String,
 });
@@ -28,39 +30,41 @@ const userSchema = new mongoose.Schema({
 // Create a mongoose model based on the schema
 const User = mongoose.model('User', userSchema);
 
-// Endpoint for handling signup
+// Endpoint for handling user signup
 app.post('/signup', async (req, res) => {
+    // Extract username and password from the request body
     const { username, password } = req.body;
 
     try {
         console.log('Received signup request:', { username, password });
 
-        // Check if username already exists
+        // Check if the username already exists in the database
         const existingUser = await User.findOne({ username });
         if (existingUser) {
             console.log('Username already exists');
             return res.status(400).json({ error: 'Username already exists' });
         }
 
-        // Save user to the database
+        // Create a new user instance
         const newUser = new User({ username, password });
 
-        // Generate random and unique credit card number
+        // Generate a random and unique credit card number
         const creditCardNumber = generateCreditCardNumber();
         newUser.creditCardNumber = creditCardNumber;
 
-        // Generate CVV number
+        // Generate a random 3-digit CVV number
         const cvv = generateCVV();
         newUser.cvv = cvv;
 
-        // Generate expiry date (MM/DD format) based on the signup date
+        // Generate an expiry date (MM/DD format) based on the current date
         const signupDate = new Date();
-        const expiryDate = generateExpiryDate(signupdate);
+        const expiryDate = generateExpiryDate(signupDate);
         newUser.expiryDate = expiryDate;
 
+        // Save the new user to the database
         await newUser.save();
 
-        // You can perform additional tasks here (e.g., send a confirmation email)
+        // Additional tasks can be performed here, such as sending a confirmation email
 
         // Respond with success
         console.log('Signup successful');
@@ -72,7 +76,7 @@ app.post('/signup', async (req, res) => {
     }
 });
 
-// Helper function to generate a random 4-digit credit card number
+// Helper function to generate a random 16-digit credit card number
 function generateCreditCardNumber() {
     const randomDigits = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10));
     const formattedNumber = randomDigits.join('').replace(/(\d{4})/g, '$1 ').trim();
@@ -91,14 +95,15 @@ function generateExpiryDate(signupDate) {
     return `${month.toString().padStart(2, '0')}/${year.toString().padStart(2, '0')}`;
 }
 
-// Endpoint for handling login
+// Endpoint for handling user login
 app.post('/login', async (req, res) => {
+    // Extract username and password from the request body
     const { username, password } = req.body;
 
     try {
         console.log('Received login request:', { username, password });
 
-        // Check if the username exists
+        // Check if the username exists in the database
         const existingUser = await User.findOne({ username });
         if (!existingUser) {
             console.log('Username not found');
@@ -114,7 +119,7 @@ app.post('/login', async (req, res) => {
         // Login successful
         console.log('Login successful');
 
-        // You can perform additional tasks here (e.g., create a session, generate a token)
+        // Additional tasks can be performed here, such as creating a session or generating a token
 
         // Respond with success
         res.status(200).json({ message: 'Login successful' });
@@ -124,8 +129,6 @@ app.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-// This is where you can add more endpoints or configurations if needed
 
 // Start the server
 app.listen(port, () => {
