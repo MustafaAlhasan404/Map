@@ -1,4 +1,4 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, library_private_types_in_public_api, avoid_print, depend_on_referenced_packages
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, library_private_types_in_public_api, avoid_print, depend_on_referenced_packages, use_super_parameters, unused_field, prefer_const_literals_to_create_immutables
 
 import 'package:EvilBank/login.dart';
 import 'package:flutter/material.dart';
@@ -68,25 +68,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void dispose() {
-    _cvvFocusNode.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'GoogleSans',
       ),
       home: Scaffold(
-        backgroundColor: Color(0xFF171738),
+        backgroundColor: const Color(0xFF171738),
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.only(top: 80),
+            padding: const EdgeInsets.only(top: 80),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
                   onTap: () {
@@ -103,14 +98,49 @@ class _HomeScreenState extends State<HomeScreen> {
                     showBackSide: _showBackSide,
                     frontBackground: CardBackgrounds.black,
                     backBackground: Container(
-                      // Wrap the color in a Container
-                      color: Color(0xFF8D86C9),
+                      color: const Color(0xFF8D86C9),
                     ),
                     showShadow: true,
                   ),
                 ),
-                SizedBox(
-                  height: 40,
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Card(
+                    color: Color(
+                        0xFF000015), // Match the credit card background color
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Your Balance  :  ',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: 'GoogleSans',
+                              color: Colors
+                                  .white, // Match the credit card text color
+                            ),
+                          ),
+                          Text(
+                            'null',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -135,7 +165,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Awesome Credit Card Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
