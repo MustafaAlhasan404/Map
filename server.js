@@ -76,6 +76,31 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+app.get('/getCreditCardInfo/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Extract and send credit card information in the response
+        const creditCardInfo = {
+            cardNumber: user.creditCardNumber,
+            cvv: user.cvv,
+            expiryDate: user.expiryDate,
+        };
+
+        res.status(200).json(creditCardInfo);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 // Helper function to generate a random 16-digit credit card number
 function generateCreditCardNumber() {
     const randomDigits = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10));
