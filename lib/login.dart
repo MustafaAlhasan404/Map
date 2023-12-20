@@ -5,6 +5,8 @@ import 'signup.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+String? loggedInUser;
+
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -293,12 +295,14 @@ class _LoginPageState extends State<LoginPage> {
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Login successful, navigate to HomeScreen
+        // Successful login, save username
+        loggedInUser = username;
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                HomeScreen(), // Replace with your actual home page class
+            builder: (context) => HomeScreen(
+              username: loggedInUser,
+            ),
           ),
         );
       } else if (response.statusCode == 400) {

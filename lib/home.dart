@@ -1,9 +1,15 @@
+import 'package:EvilBank/login.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_card/awesome_card.dart';
 import 'bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final String? username;
+
+  const HomeScreen({
+    Key? key,
+    required this.username, // Define parameter here
+  }) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -13,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   String cardNumber = '';
-  String cardHolderName = '';
+  String cardHolderName = loggedInUser!;
   String expiryDate = '';
   String cvv = '';
 
@@ -99,7 +105,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomeScreen(),
+      home: HomeScreen(
+        username: loggedInUser,
+      ),
     );
   }
 }
