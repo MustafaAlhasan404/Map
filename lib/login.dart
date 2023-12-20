@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, prefer_const_declarations, use_build_context_synchronously, sort_child_properties_last, avoid_print, depend_on_referenced_packages, deprecated_member_use
+
 import 'package:EvilBank/home.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
