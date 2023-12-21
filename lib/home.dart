@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, library_private_types_in_public_api, avoid_print, depend_on_referenced_packages, use_super_parameters, unused_field, prefer_const_literals_to_create_immutables
-
 import 'package:EvilBank/login.dart';
 import 'package:flutter/material.dart';
 import 'package:awesome_card/awesome_card.dart';
@@ -12,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 
   const HomeScreen({
     Key? key,
-    required this.username, // Define parameter here
+    required this.username,
   }) : super(key: key);
 
   @override
@@ -20,40 +18,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  double userBalance = 0.0;
   int _selectedIndex = 0;
-
   String cardNumber = '';
   String cardHolderName = loggedInUser!;
   String expiryDate = '';
   String cvv = '';
-
-  Future<void> fetchCreditCardInfo() async {
-    final String url =
-        'http://10.0.2.2:3000/getCreditCardInfo/${widget.username}';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        // Parse the credit card information from the response
-        final Map<String, dynamic> creditCardInfo = jsonDecode(response.body);
-
-        // Update the state with the fetched credit card information
-        setState(() {
-          cardNumber = creditCardInfo['cardNumber'];
-          cvv = creditCardInfo['cvv'];
-          expiryDate = creditCardInfo['expiryDate'];
-        });
-      } else {
-        // Handle errors
-        print(
-            'Failed to fetch credit card information. Status code: ${response.statusCode}');
-      }
-    } catch (error) {
-      // Handle network or server errors
-      print('Error fetching credit card information: $error');
-    }
-  }
 
   late FocusNode _cvvFocusNode;
   bool _showBackSide = false;
@@ -63,8 +33,53 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _cvvFocusNode = FocusNode();
 
-    // Fetch credit card information when the screen is initialized
     fetchCreditCardInfo();
+    fetchUserBalance();
+  }
+
+  Future<void> fetchUserBalance() async {
+    final String url = 'http://10.0.2.2:3000/getUserBalance/${widget.username}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> userData = jsonDecode(response.body);
+        print('Fetched user balance: $userData');
+        setState(() {
+          userBalance = (userData['balance'] as num).toDouble();
+        });
+        print('Updated user balance in state: $userBalance');
+      } else {
+        print(
+            'Failed to fetch user balance. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching user balance: $error');
+    }
+  }
+
+  Future<void> fetchCreditCardInfo() async {
+    final String url =
+        'http://10.0.2.2:3000/getCreditCardInfo/${widget.username}';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> creditCardInfo = jsonDecode(response.body);
+        setState(() {
+          cardNumber = creditCardInfo['cardNumber'];
+          cvv = creditCardInfo['cvv'];
+          expiryDate = creditCardInfo['expiryDate'];
+        });
+      } else {
+        print(
+            'Failed to fetch credit card information. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error fetching credit card information: $error');
+    }
   }
 
   @override
@@ -109,8 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Card(
-                    color: Color(
-                        0xFF000015), // Match the credit card background color
+                    color: Color(0xFF171738),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.0),
                     ),
@@ -120,17 +134,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Your Balance  :  ',
+                            'Balance: ',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'GoogleSans',
-                              color: Colors
-                                  .white, // Match the credit card text color
+                              color: Colors.white,
                             ),
                           ),
                           Text(
-                            'null',
+                            '$userBalance',
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,

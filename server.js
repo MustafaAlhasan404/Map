@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const readline = require('readline');
 
 // Create an Express application
 const app = express();
@@ -25,6 +26,7 @@ const userSchema = new mongoose.Schema({
     creditCardNumber: { type: String, unique: true },
     cvv: String,
     expiryDate: String,
+    balance: { type: Number, default: 0 }, // Add balance field to the schema
 });
 
 // Create a mongoose model based on the schema
@@ -64,7 +66,10 @@ app.post('/signup', async (req, res) => {
         // Save the new user to the database
         await newUser.save();
 
-        // Additional tasks can be performed here, such as sending a confirmation email
+        // Set the initial balance for the user (CLI option)
+        setInitialBalance(username);
+
+        // Additional logic can be added here, such as sending a confirmation email
 
         // Respond with success
         console.log('Signup successful');
@@ -76,6 +81,47 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+// Helper function to set the initial balance for a user
+function setInitialBalance(username) {
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+    });
+
+    rl.question(`Enter the initial balance for user ${username}: `, async (balance) => {
+        // Perform the logic to set the balance (you can modify this part)
+        console.log(`Setting initial balance for user ${username}: ${balance}`);
+
+        // Update the user's balance in the database
+        await User.updateOne({ username }, { $set: { balance } });
+
+        rl.close();
+    });
+}
+
+// Endpoint for getting user balance
+app.get('/getUserBalance/:username', async (req, res) => {
+    const username = req.params.username;
+
+    try {
+        const user = await User.findOne({ username });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const userBalance = {
+            balance: user.balance,
+        };
+
+        res.status(200).json(userBalance);
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Endpoint for getting credit card information
 app.get('/getCreditCardInfo/:username', async (req, res) => {
     const username = req.params.username;
 
@@ -99,7 +145,6 @@ app.get('/getCreditCardInfo/:username', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
 
 // Helper function to generate a random 16-digit credit card number
 function generateCreditCardNumber() {
